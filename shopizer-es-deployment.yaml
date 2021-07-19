@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shopizer-es
+  name: shopizer-es
+  namespace: shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopizer-es
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: shopizer-es
+    spec:
+      containers:
+      - env:
+        - name: cluster.name
+          value: shopizer
+        - name: bootstrap.memory_lock
+          value: "true"
+        - name: discovery.type
+          value: single-node
+        - name: ES_JAVA_OPTS
+          value: -Xms512m -Xmx512m
+        image: docker.elastic.co/elasticsearch/elasticsearch:7.5.2
+        name: shopizer-es
+        ports:
+        - containerPort: 9200
+        resources:
+          limits:
+            memory: "1Gi"
+      restartPolicy: Always

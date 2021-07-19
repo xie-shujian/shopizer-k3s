@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shopizer-db
+  name: shopizer-db
+  namespace: shop
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: shopizer-db
+  template:
+    metadata:
+      labels:
+        app: shopizer-db
+    spec:
+      containers:
+      - env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: shopizer123
+        - name: MYSQL_DATABASE
+          value: SALESMANAGER
+        - name: MYSQL_USER
+          value: shopizer_db_user
+        - name: MYSQL_PASSWORD
+          value: my-password
+        image: mysql/mysql-server:5.7
+        name: shopizer-db
+        ports:
+        - containerPort: 3306
+      restartPolicy: Always

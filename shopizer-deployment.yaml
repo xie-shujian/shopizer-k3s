@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: shopizer
+  name: shopizer
+  namespace: shop
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: shopizer
+  template:
+    metadata:
+      labels:
+        app: shopizer
+    spec:
+      containers:
+      - env:
+        - name: SPRING_PROFILES_ACTIVE
+          value: dependency
+        - name: JAVA_OPTS
+          value: -Xms1024m -Xmx1024m
+        - name: elasticsearch.server.host
+          value: shopizer-es
+        - name: elasticsearch.server.port
+          value: "9200"
+        - name: db.jdbcUrl
+          value: jdbc:mysql://shopizer-db:3306/SALESMANAGER?autoReconnect=true&serverTimeZone=UTC&useUnicode=true&characterEncoding=UTF-8
+        - name: db.user
+          value: shopizer_db_user
+        - name: db.password
+          value: my-password
+        - name: elasticsearch.security.password
+          value: NOTREQUIRED
+        - name: config.displayShipping
+          value: "true"
+        - name: config.googleMapsKey
+          value: "NO"
+        - name: config.recaptcha.secretKey
+          value: "NO"
+        - name: config.recaptcha.siteKey
+          value: "NO"
+        - name: config.shippingDistancePreProcessor.acceptedZones
+          value: QC,ON,NB,NY,CA,FL,NC,SC
+        - name: config.shippingDistancePreProcessor.apiKey
+          value: "NO"
+        image: shopizerecomm/shopizer:3.0.0
+        name: shopizer
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "1Gi"
+      restartPolicy: Always
